@@ -41,7 +41,8 @@ libraryDependencies ++= Seq(
   "com.github.pureconfig" %% "pureconfig"                      % pureConfigVersion,
   "com.github.pureconfig" %% "pureconfig-http4s"               % pureConfigVersion,
   "co.fs2"                %% "fs2-io"                          % fs2Version,
-  "io.chrisdavenport"     %% "log4cats-slf4j"                  % log4CatsVersion
+  "io.chrisdavenport"     %% "log4cats-slf4j"                  % log4CatsVersion,
+  "io.chrisdavenport"     %% "log4cats-noop"                   % log4CatsVersion
 )
 addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3")
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.0")
