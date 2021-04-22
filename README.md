@@ -1,3 +1,3 @@
 # twitch-api
 
-A simple api that returns stream information for specified streamers
+A simple API for retrieving livestream information from Twitch
