@@ -16,33 +16,50 @@ class LivestreamsRoutesSpec extends WordSpec with Matchers with ScalaCheckProper
 
   implicit val logger = NoOpLogger.impl[IO]
 
-  def livestreamJson(ls: Livestream): Json =
+  def responseJson(ls: Livestream*): Json =
     Json.obj("data" :=
-      Json.arr(
-        Json.obj(
-          "user_name" := ls.user_name,
-          "game_name" := ls.game_name,
-          "title" := ls.title,
-          "viewer_count" := ls.viewer_count,
-          "thumbnail_url" := ls.thumbnail_url
-        )
+      Json.fromValues(
+        ls.map { ls =>
+          Json.obj(
+            "user_name" := ls.user_name,
+            "game_name" := ls.game_name,
+            "title" := ls.title,
+            "viewer_count" := ls.viewer_count,
+            "thumbnail_url" := ls.thumbnail_url
+          )
+        }
       )
     )
 
-  def mockLivestreamInfoService(livestream: Livestream) = new LivestreamInfo[IO] {
-    def getStream(streamer: Streamer): IO[Livestreams] = IO.pure(Livestreams(List(livestream)))
-    def getStreams(streamers: List[Streamer]): IO[Livestreams] = IO.pure(Livestreams(List(livestream)))
+  def mockLivestreamInfoService(livestreams: Livestream*) = new LivestreamInfo[IO] {
+    def getStream(streamer: Streamer): IO[Livestreams] = IO.pure(Livestreams(livestreams.toList))
+    def getStreams(streamers: List[Streamer]): IO[Livestreams] = IO.pure(Livestreams(livestreams.toList))
   }
 
   "LivestreamRoutes" should {
     "get stream info for a single streamer" in {
       forAll { (livestream: Livestream) =>
 
-        val result = livestreamJson(livestream)
+        val result = responseJson(livestream)
         val mockSvc = mockLivestreamInfoService(livestream)
 
         val routes = LivestreamRoutes.routes(mockSvc).orNotFound
         val req = Request[IO](method = Method.GET, uri = Uri.unsafeFromString("/livestreams/Streamer"))
+        val routeResult = routes.run(req).unsafeRunSync
+
+        routeResult.status.isSuccess should be(true)
+        routeResult.as[Json].unsafeRunSync() should be(result)
+      }
+    }
+
+    "get stream info for multiple streamers" in {
+      forAll { (ls1: Livestream, ls2: Livestream) =>
+
+        val result = responseJson(ls1, ls2)
+        val mockSvc = mockLivestreamInfoService(ls1, ls2)
+
+        val routes = LivestreamRoutes.routes(mockSvc).orNotFound
+        val req = Request[IO](method = Method.GET, uri = Uri.unsafeFromString("/livestreams?user_login=Streamer&user_login=Streamer2"))
         val routeResult = routes.run(req).unsafeRunSync
 
         routeResult.status.isSuccess should be(true)
