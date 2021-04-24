@@ -2,9 +2,8 @@ package com.twitch.livestreams
 
 import cats.effect.IO
 import io.chrisdavenport.log4cats.noop.NoOpLogger
-import io.circe.Json
-import org.http4s.{Header, Method, Request, Uri}
-import org.scalatest.{FlatSpec, Matchers, WordSpec}
+import org.http4s.{Method, Request, Uri}
+import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.http4s.implicits._
 import io.circe.syntax._
@@ -32,7 +31,6 @@ class LivestreamsRoutesSpec extends WordSpec with Matchers with ScalaCheckProper
     )
 
   def mockLivestreamInfoService(livestreams: Livestream*) = new LivestreamInfo[IO] {
-    def getStream(streamer: Streamer): IO[Livestreams] = IO.pure(Livestreams(livestreams.toList))
     def getStreams(streamers: List[Streamer]): IO[Livestreams] = IO.pure(Livestreams(livestreams.toList))
   }
 
