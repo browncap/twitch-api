@@ -37,20 +37,6 @@ class LivestreamsRoutesSpec extends WordSpec with Matchers with ScalaCheckProper
   }
 
   "LivestreamRoutes" should {
-    "get stream info for a single streamer" in {
-      forAll { (livestream: Livestream) =>
-
-        val result = responseJson(livestream)
-        val mockSvc = mockLivestreamInfoService(livestream)
-
-        val routes = LivestreamRoutes.routes(mockSvc).orNotFound
-        val req = Request[IO](method = Method.GET, uri = Uri.unsafeFromString("/livestreams/Streamer"))
-        val routeResult = routes.run(req).unsafeRunSync
-
-        routeResult.status.isSuccess should be(true)
-        routeResult.as[Json].unsafeRunSync() should be(result)
-      }
-    }
 
     "get stream info for multiple streamers" in {
       forAll { (ls1: Livestream, ls2: Livestream) =>

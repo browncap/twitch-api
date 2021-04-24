@@ -16,12 +16,6 @@ object LivestreamRoutes {
 
     HttpRoutes.of[F] {
 
-      case GET -> Root / "livestreams" / StreamerVar(streamer) => //Can be reduced to a single endpoint...
-        for {
-          ls   <- livestreams.getStream(streamer)
-          resp <- Ok(ls)
-        } yield resp
-
       case GET -> Root / "livestreams" :? StreamerParam(streamer) =>
         for {
           s    <- F.fromOption(streamer.toOption, BadQueryParameters)
