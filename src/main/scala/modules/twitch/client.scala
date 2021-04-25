@@ -1,6 +1,5 @@
 package com.twitch.integration
 
-import cats.implicits._
 import cats.effect.Sync
 import com.twitch.config.TwitchConfig
 import com.twitch.livestreams.{Livestreams, Streamer}
@@ -11,8 +10,6 @@ import org.http4s.circe.CirceEntityDecoder._
 import org.http4s.client.Client
 import org.http4s.headers.Authorization
 import org.http4s.implicits._
-
-import scala.concurrent.ExecutionContext
 
 trait TwitchClient[F[_]] {
   def retrieveAccessToken: F[AuthResponse]
@@ -29,7 +26,7 @@ object TwitchClient {
         val req = Request[F](
           method = Method.POST,
           uri =
-            uri"https://id.twitch.tv/oauth2/token?client_id" //https://id.twitch.tv/oauth2/token?client_id=${config.clientId}&client_secret=${config.clientSecret}&grant_type=client_credentials
+            uri"https://id.twitch.tv/oauth2/token?client_id"
               .withQueryParam("client_id", config.clientId)
               .withQueryParam("client_secret", config.clientSecret)
               .withQueryParam("grant_type", "client_credentials")

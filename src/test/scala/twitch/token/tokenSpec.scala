@@ -3,7 +3,6 @@ package com.twitch.token
 import cats.effect.IO
 import com.twitch.integration.{AuthResponse, TwitchClient}
 import com.twitch.livestreams.{Livestreams, Streamer}
-import io.chrisdavenport.log4cats.noop.NoOpLogger
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
