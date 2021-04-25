@@ -41,7 +41,7 @@ object Server {
       .withHttpApp(services)
       .serve
       .concurrently {
-        Stream.awakeEvery[F](4.hours) *> Stream.eval(token.refreshAccessToken)
+        Stream.awakeEvery[F](4.hours).map(_ => token.refreshAccessToken)
       }
       .compile
       .drain

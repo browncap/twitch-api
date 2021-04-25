@@ -13,12 +13,10 @@
    def build[F[_]](twitchClient: TwitchClient[F], token: Token[F])(implicit F: Sync[F]): LivestreamInfo[F] = {
      new LivestreamInfo[F] {
 
-       override def getStreams(streamers: List[Streamer]): F[Livestreams] = (for {
+       override def getStreams(streamers: List[Streamer]): F[Livestreams] = for {
          token   <- token.getAccessToken
          streams <- twitchClient.getStreams(token, streamers)
-       } yield streams).onError {
-         case e => F.pure(println(e))
-       }
+       } yield streams
      }
    }
  }

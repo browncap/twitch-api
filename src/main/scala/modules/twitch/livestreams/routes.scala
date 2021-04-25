@@ -13,13 +13,14 @@ object LivestreamRoutes {
     import dsl._
 
     HttpRoutes.of[F] {
-
       case GET -> Root / "livestreams" :? StreamerParam(streamer) =>
-        for {
+        (for {
           s    <- F.fromOption(streamer.toOption, BadQueryParameters)
           ls   <- livestreams.getStreams(s)
           resp <- Ok(ls)
-        } yield resp
+        } yield resp).recoverWith {
+          case BadQueryParameters => BadRequest()
+        }
 
     }
   }

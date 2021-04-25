@@ -17,7 +17,6 @@ import scala.concurrent.ExecutionContext
 trait TwitchClient[F[_]] {
   def retrieveAccessToken: F[AuthResponse]
   def validateAccessToken(token: AccessToken): F[Unit]
-  def getStream(token: AccessToken, streamer: Streamer): F[Livestreams]
   def getStreams(token: AccessToken, streamers: List[Streamer]): F[Livestreams]
 }
 
@@ -49,20 +48,6 @@ object TwitchClient {
         )
 
         client.expect[Unit](req)
-      }
-
-      def getStream(token: AccessToken, streamer: Streamer): F[Livestreams] = {
-        val req = Request[F](
-          method = Method.GET,
-          uri =
-            uri"https://api.twitch.tv/helix/streams" //https://api.twitch.tv/helix/streams?user_login=${streamer.value}
-              .withQueryParam("user_login", streamer),
-          headers = Headers.of(
-            Authorization(Credentials.Token(AuthScheme.Bearer, token.value)),
-            Header("client-id", config.clientId))
-        )
-
-        client.expect[Livestreams](req)
       }
 
       def getStreams(token: AccessToken, streamers: List[Streamer]): F[Livestreams] = {
